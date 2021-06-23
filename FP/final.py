@@ -77,7 +77,7 @@ while(1):
 
 print("APRILTAG FINISH")
 uart.write("1500\r\n".encode())
-time.sleep(5)
+time.sleep(8)
 
 
       #uart.write(("ID: %d Tx: %f, Ty %f, Tz %f, Rx %f, Ry %f, Rz %f\r\n" %print_args).encode())
@@ -120,6 +120,7 @@ while (True):
     clock.tick()
     img = sensor.snapshot()
     centroid_sum = 0
+    AREA=0
     for r in ROIS:
         blobs = img.find_blobs(GRAYSCALE_THRESHOLD, roi=r[0:4], merge=True)
         # r[0:4] is roi tuple.
@@ -138,18 +139,21 @@ while (True):
                     # most_pixels，则把本区域作为像素总数最大的颜色块。更新most_pixels和largest_blob
                     largest_blob = i
 
+            
             # 在色块周围画一个矩形。
             img.draw_rectangle(blobs[largest_blob].rect())
+            AREA_A = blobs[largest_blob].area()
             # 将此区域的像素数最大的颜色块画矩形和十字形标记出来
             img.draw_cross(blobs[largest_blob].cx(),
                            blobs[largest_blob].cy())
 
             centroid_sum += blobs[largest_blob].cx() * r[4]  # r[4] is the roi weight.
             # 计算centroid_sum，centroid_sum等于每个区域的最大颜色块的中心点的x坐标值乘本区域的权值
-
+    
+    
     center_pos = (centroid_sum / weight_sum)  # Determine center of line.
     # 中间公式
-
+    #1300<BLOB< 1800 
     # 将center_pos转换为一个偏角。我们用的是非线性运算，所以越偏离直线，响应越强。
     # 非线性操作很适合用于这样的算法的输出，以引起响应“触发器”。
     deflection_angle = 0
@@ -170,22 +174,33 @@ while (True):
     # 通过该角度可以合并最靠近机器人的部分直线和远离机器人的部分直线，以实现更好的预测。
 
     # print("Turn Angle: %1.2f" % deflection_angle)
-
+    #print("BLOB: %1.2f" %blobs[largest_blob].cx())
     # 将结果打印在terminal中
     # uart.write(("ID: %d Tx: %f, Ty %f, Tz %f, Rx %f, R    y %f, Rz %f\r\n" %print_args).encode())
     # uart.write(("ID: %d \r\n" %tag.id()).encode())
+
     uart.write("%1.2f\r\n" % deflection_angle)
     if deflection_angle > 38:
         time.sleep_ms(30)
         uart.write("1000\r\n".encode())
         print("Right!Turn Angle: %1.2f" % deflection_angle)
+    elif deflection_angle < 21 and 1000<AREA_A<1300:
+        uart.write("12\r\n".encode())
+        time.sleep(1.7)
+        uart.write("1000\r\n".encode())
+        print("LONG TURN LEFT! Angle: %1.2f" % deflection_angle)
+    elif deflection_angle < 21 and 1000<AREA_A<1300:
+        uart.write("50\r\n".encode())
+        time.sleep(1.4)
+        uart.write("1000\r\n".encode())
+        print("LONG TURN RIGHT! Angle: %1.2f" % deflection_angle)
     elif deflection_angle < 14:
-        time.sleep(1.5)
+        time.sleep_ms(100)
         uart.write("1000\r\n".encode())
         print("Left! Turn Angle: %1.2f" % deflection_angle)
     else:
         time.sleep_ms(100)
         uart.write("1000\r\n".encode())
         print("Straight! Turn Angle: %1.2f" % deflection_angle)
-
+    print("AREA: %1.2f"%AREA_A)
     # uart.write(("FPS %f\r\n" % cclock.fps()).encode())
