@@ -197,6 +197,14 @@ void RPC_FINAL(Arguments* in, Reply* out)
       
     }
     printf("distance: %1.2f\r\n",(float)ping1);
+       
+   while((float)ping1>40){
+      printf("ENTER! distacne: %1.2f\r\n",(float)ping1);
+      car.goStraight(30);
+   }
+
+   car.stop();
+
    int LINE=0;
    while(1)
    {
