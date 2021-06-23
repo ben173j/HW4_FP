@@ -180,7 +180,12 @@ while (True):
     # uart.write(("ID: %d \r\n" %tag.id()).encode())
 
     uart.write("%1.2f\r\n" % deflection_angle)
-    if deflection_angle > 38:
+    if deflection_angle > 45 and 1000<AREA_A<1300:
+        uart.write("50\r\n".encode())
+        time.sleep(1.4)
+        uart.write("1000\r\n".encode())
+        print("LONG TURN RIGHT! Angle: %1.2f" % deflection_angle)
+    elif deflection_angle > 38:
         time.sleep_ms(30)
         uart.write("1000\r\n".encode())
         print("Right!Turn Angle: %1.2f" % deflection_angle)
@@ -189,11 +194,6 @@ while (True):
         time.sleep(1.7)
         uart.write("1000\r\n".encode())
         print("LONG TURN LEFT! Angle: %1.2f" % deflection_angle)
-    elif deflection_angle > 45 and 1000<AREA_A<1300:
-        uart.write("50\r\n".encode())
-        time.sleep(1.4)
-        uart.write("1000\r\n".encode())
-        print("LONG TURN RIGHT! Angle: %1.2f" % deflection_angle)
     elif deflection_angle < 14:
         time.sleep_ms(100)
         uart.write("1000\r\n".encode())
