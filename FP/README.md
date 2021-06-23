@@ -20,15 +20,12 @@ Next, user should run car_control.py by using
 sudo python3 car_control.py /dev/ttyUSB*
 where * represents the ttyUSB number.
 
-Then, user should press r and the car will start detecting
+Then, user should press f and the car will start detecting
 the available AprilTag and it will make
 itself perpendicular with the apriltag.
+After detecting the available Apriltag,
+the car will go closer to it until their distance is 40cm (measured by PING)
 When it is perpendicular, LED2  on mbed will be turned on and the car.
-After few seconds, teh car 
-will start detecting a straight line and follow the straight line.
+After few seconds, the car 
+will start detecting a line and follow it.
 
-After around 1 mins, the car will stop. Then
-user can take an object and place it in front of the car.
-If the distance is less than 8 cm, the car will distant itself 
-from the object, but if the distance is more than 8cm, the car will 
-make itself nearer until the distance 8 cm.
