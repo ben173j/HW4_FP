@@ -189,7 +189,7 @@ while (True):
         time.sleep(1.7)
         uart.write("1000\r\n".encode())
         print("LONG TURN LEFT! Angle: %1.2f" % deflection_angle)
-    elif deflection_angle < 21 and 1000<AREA_A<1300:
+    elif deflection_angle > 45 and 1000<AREA_A<1300:
         uart.write("50\r\n".encode())
         time.sleep(1.4)
         uart.write("1000\r\n".encode())
